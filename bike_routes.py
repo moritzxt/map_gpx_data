@@ -1,7 +1,5 @@
 
 import folium
-import openrouteservice
-from openrouteservice import convert
 import json
 import branca.colormap as cm
 import numpy as np
