@@ -53,7 +53,45 @@ def save_map(m, path_html = 'bike_map.html'):
 
     m.save(path_html)
 
+def get_data(List):
 
+    lat = []
+    lon = []
+    routes = {} #dict to save all routes 
+    df_coords_total = pd.DataFrame() #Dataframe to save all coordinates
+    k = 0 # iterating variable to get starting position for each route
+    key_value = 1 #variable to generate key for routes dict
+
+    for link in List:
+        data = read_json(link)
+        try:
+            lon.extend(data.LON.tolist())
+            lat.extend(data.LAT.tolist())
+        except:
+            print('Error im Dataframe', sep='|')
+
+    
+    df_coords_total['lat'] = lat
+    df_coords_total['long'] = lon
+    # Reducing Datapoints by rounding, less computing time, less exact
+    df_coords_total['lat'] = df_coords_total['lat'].round(4) 
+    df_coords_total['long'] = df_coords_total['long'].round(4)
+    df_coords_total = df_coords_total.dropna()
+    # Grouping same datapoints, counting the appearance of same valuepairs 
+    # to create weight value for the map
+    df_new = df_coords_total.groupby(by=['lat','long'], sort=False).size().to_frame('count').reset_index()
+
+
+
+    for i in range(len(df_new)):
+        if abs(df_new['lat'].iloc[i] - df_new['lat'].iloc[i-1]) > 0.01 or abs(df_new['long'].iloc[i] - df_new['long'].iloc[i-1]) > 0.01:
+            '''condition checks wether the next point is 
+                too far away to be from the same route so the routes can be split up'''
+            routes[f'route_{key_value}'] = df_new.iloc[k:i]
+            k = i
+            key_value +=1
+
+    return routes
 
 
 def create_bike_map(dict):
@@ -74,3 +112,4 @@ def create_bike_map(dict):
             folium.PolyLine(points, weight = 3, opacity = 1).add_to(m)
         except:
              print(f'Error to add Route {key}')
+    save_map(m)
