@@ -113,3 +113,8 @@ def create_bike_map(dict):
         except:
              print(f'Error to add Route {key}')
     save_map(m)
+
+
+if __name__ == '__main__':
+    routes = get_data(List)
+    create_bike_map(routes)
