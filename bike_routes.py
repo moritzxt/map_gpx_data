@@ -8,7 +8,7 @@ import os
 
 
 #Path of your activity files
-path_gpx = "PATH"
+path_gpx = "PATH TO JSON FILES FROM GOLDEN CHEETAH USING STRAVA API TO GET ACTIVITIES"
 List = os.listdir(path_gpx)
 
 
@@ -72,8 +72,8 @@ def get_data(List):
     df_coords_total['lat'] = lat
     df_coords_total['long'] = lon
     # Reducing Datapoints by rounding, less computing time, less exact
-    df_coords_total['lat'] = df_coords_total['lat'].round(4) 
-    df_coords_total['long'] = df_coords_total['long'].round(4)
+    df_coords_total['lat'] = df_coords_total['lat'].round(5) 
+    df_coords_total['long'] = df_coords_total['long'].round(5)
     df_coords_total = df_coords_total.dropna()
     # Grouping same datapoints, counting the appearance of same valuepairs 
     # to create weight value for the map
